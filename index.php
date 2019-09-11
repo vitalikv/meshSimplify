@@ -4,57 +4,141 @@
 		<title>three.js webgl - modifier - Subdivisions using Loop Subdivision Scheme</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		<link type="text/css" rel="stylesheet" href="main.css">
 	</head>
 	<body>
 
-		<script type="module">
-			import * as THREE from '../build/three.module.js';
-			import { OrbitControls } from './jsm/controls/OrbitControls.js';
-			import { GLTFLoader } from './jsm/loaders/GLTFLoader.js';
-			import { SimplifyModifier } from './jsm/modifiers/SimplifyModifier.js';
+		<script src="js/three.min.js"></script>
+		<script src="js/OrbitControls.js"></script>
+		<script src="js/GLTFLoader.js"></script>
+		<script src="js/SimplifyModifier.js"></script>
+
+		<script src="js/loader/inflate.min.js"></script>
+		<script src="js/loader/FBXLoader.js"></script>		
+		<script src="js/OBJLoader.js"></script>
+		
+		<script>
 			var renderer, scene, camera;
 			init();
 			function init() {
-				var info = document.createElement( 'div' );
-				info.style.position = 'absolute';
-				info.style.top = '10px';
-				info.style.width = '100%';
-				info.style.textAlign = 'center';
-				info.innerHTML = '<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - Vertex Reduction using SimplifyModifier';
-				document.body.appendChild( info );
+
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				document.body.appendChild( renderer.domElement );
 				scene = new THREE.Scene();
+				scene.background = new THREE.Color( 0xffffff );
 				camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 1000 );
 				camera.position.z = 15;
-				var controls = new OrbitControls( camera, renderer.domElement );
+				var controls = new THREE.OrbitControls( camera, renderer.domElement );
 				controls.addEventListener( 'change', render ); // use if there is no animation loop
-				controls.enablePan = false;
-				controls.enableZoom = false;
+				//controls.enablePan = false;
+				//controls.enableZoom = false;
 				scene.add( new THREE.AmbientLight( 0xffffff, 0.2 ) );
 				var light = new THREE.PointLight( 0xffffff, 0.7 );
 				camera.add( light );
 				scene.add( camera );
-				new GLTFLoader().load( "models/gltf/LeePerrySmith/LeePerrySmith.glb", function ( gltf ) {
-					var mesh = gltf.scene.children[ 0 ];
-					mesh.position.x = - 3;
-					mesh.rotation.y = Math.PI / 2;
-					scene.add( mesh );
-					var modifier = new SimplifyModifier();
-					var simplified = mesh.clone();
-					simplified.material = simplified.material.clone();
-					simplified.material.flatShading = true;
-					var count = Math.floor( simplified.geometry.attributes.position.count * 0.875 ); // number of vertices to remove
-					simplified.geometry = modifier.modify( simplified.geometry, count );
-					simplified.position.x = 3;
-					simplified.rotation.y = - Math.PI / 2;
-					scene.add( simplified );
-					render();
-				} );
+
 				window.addEventListener( 'resize', onWindowResize, false );
+				
+				
+				var loader = new THREE.FBXLoader();
+				loader.load( 'export/nasos2.fbx', function ( obj ) 
+				{ 					
+					obj = obj.children[0];
+					obj.scale.set(10.1,10.1,10.1); 
+					obj.position.set(5,0,0);					
+					scene.add( obj );
+					
+					console.log(obj);
+	
+	
+	obj.material[0].side = THREE.DoubleSide;
+	obj.material[1].side = THREE.DoubleSide;
+	obj.material[2].side = THREE.DoubleSide;
+	obj.material[3].side = THREE.DoubleSide;
+		MeshGeometry = new THREE.Geometry().fromBufferGeometry( obj.geometry );
+		MeshGeometry.computeFaceNormals();
+		MeshGeometry.mergeVertices();
+		MeshGeometry.computeVertexNormals();
+
+		var modifier = new THREE.SimplifyModifier();
+        var simplified = modifier.modify(MeshGeometry, MeshGeometry.vertices.length * 0.85 | 0);
+        simplified.computeFaceNormals();
+        simplified.computeVertexNormals();
+
+
+
+		material1 = [obj.material[0].clone(),obj.material[1].clone(),obj.material[2].clone(),obj.material[3].clone()]; 
+		mesh = new THREE.Mesh(simplified, obj.material);
+		scene.add(mesh);
+
+mesh.position.x = -7;		
+	
+	
+	
+					scene.add( mesh );
+					console.log(222 , mesh);
+					render();
+				});	
+				
+				
+				
+			new THREE.OBJLoader().load						
+			( 
+				'export/nasos.obj', 
+				function ( object ) 
+				{		
+					
+					
+					
+					var obj = object.children[0];					
+	
+					obj.scale.set(10.1, 10.1, 10.1);
+					
+					obj.material = new THREE.MeshLambertMaterial( {color: 0x00ff00} );
+					scene.add(obj);
+					
+		MeshGeometry = new THREE.Geometry().fromBufferGeometry( obj.geometry );
+		MeshGeometry.computeFaceNormals();
+		MeshGeometry.mergeVertices();
+		MeshGeometry.computeVertexNormals();
+
+		var modifier = new THREE.SimplifyModifier();
+        var simplified = modifier.modify(MeshGeometry, MeshGeometry.vertices.length * 0.15 | 0);
+        simplified.computeFaceNormals();
+        simplified.computeVertexNormals();					
+					
+		material1 = obj.material.clone(); 
+		mesh = new THREE.Mesh(simplified, material1);
+		scene.add(mesh);
+				
+
+		mesh.scale.set(10.1, 10.1, 10.1);
+		mesh.position.x = -4;
+		
+					console.log(4, mesh.geometry.attributes.position.count, obj.geometry.attributes.position.count);
+
+				} 
+			);				
+				
+
+				if(1==2)
+				{
+					var geometry = new THREE.BoxGeometry( 10, 10, 10 );
+					var material = new THREE.MeshLambertMaterial( {color: 0x00ff00} );
+					var cube = new THREE.Mesh( geometry, material );
+					scene.add( cube );	
+
+					var modifier = new THREE.SimplifyModifier();
+					var count_1 = geometry.vertices.length;
+					var count = Math.floor( geometry.vertices.length * 0.2 );
+					cube.geometry = modifier.modify( cube.geometry, count );
+					
+					console.log(333, modifier.modify( cube.geometry, count ));
+				}	
+				
+				
+				render();
 			}
 			function onWindowResize() {
 				renderer.setSize( window.innerWidth, window.innerHeight );
