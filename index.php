@@ -15,6 +15,7 @@
 		<script src="js/loader/inflate.min.js"></script>
 		<script src="js/loader/FBXLoader.js"></script>		
 		<script src="js/OBJLoader.js"></script>
+		<script src="js/OBJExporter.js"></script>
 		
 		<script>
 			var renderer, scene, camera;
@@ -50,6 +51,22 @@
 					obj.position.set(5,0,0);					
 					scene.add( obj );
 					
+					if(1==1)
+					{
+						var exporter = new THREE.OBJExporter();
+						
+						//var csv = JSON.stringify( txt );
+						var csv = exporter.parse(obj);						
+						var csvData = 'data:application/csv;charset=utf-8,' + encodeURIComponent(csv);	
+						
+						var link = document.createElement('a');
+						document.body.appendChild(link);
+						link.href = csvData;
+						link.target = '_blank';
+						link.download = 'filename1.txt';
+						link.click();			
+					}					
+					
 					console.log(1, obj);
 	
 					objClone = obj.clone();
@@ -68,6 +85,25 @@
 					scene.add( obj );
 					console.log(2, obj);
 					render();
+					
+					
+
+
+					if(1==1)
+					{
+						var exporter = new THREE.OBJExporter();
+						
+						//var csv = JSON.stringify( txt );
+						var csv = exporter.parse(obj);						
+						var csvData = 'data:application/csv;charset=utf-8,' + encodeURIComponent(csv);	
+						
+						var link = document.createElement('a');
+						document.body.appendChild(link);
+						link.href = csvData;
+						link.target = '_blank';
+						link.download = 'filename2.txt';
+						link.click();			
+					}					
 				});	
 				
 				//---------------FBX----------
