@@ -43,53 +43,92 @@
 				//---------------FBX----------
 				
 				var loader = new THREE.FBXLoader();
-				loader.load( 'export/nasos2.fbx', function ( obj ) 
+				loader.load( 'export/3.fbx', function ( obj ) 
 				{ 					
 					obj = obj.children[0];
-					obj.scale.set(10.1,10.1,10.1); 
+					obj.scale.set(0.1,0.1,0.1); 
 					obj.position.set(5,0,0);					
 					scene.add( obj );
 					
 					console.log(1, obj);
 	
-	
-					obj.material[0].side = THREE.DoubleSide;
-					obj.material[1].side = THREE.DoubleSide;
-					obj.material[2].side = THREE.DoubleSide;
-					obj.material[3].side = THREE.DoubleSide;
-					MeshGeometry = new THREE.Geometry().fromBufferGeometry( obj.geometry );
-					MeshGeometry.computeFaceNormals();
-					MeshGeometry.mergeVertices();
-					MeshGeometry.computeVertexNormals();
-
-					var modifier = new THREE.SimplifyModifier();
-					var simplified = modifier.modify(MeshGeometry, MeshGeometry.vertices.length * 0.30 | 0, true);
-					simplified.computeFaceNormals();
-					simplified.computeVertexNormals();
+					objClone = obj.clone();
+					
+					var obj = obj.clone();
+					objClone2 = obj;										
+					
+					upResizeGeometry(obj, 0.6);
 
 
-
-					material1 = [obj.material[0].clone(),obj.material[1].clone(),obj.material[2].clone(),obj.material[3].clone()];
-					material1 = new THREE.MeshLambertMaterial( {color: 0x00ff00, wireframe:false} )
-					mesh = new THREE.Mesh(simplified, material1);
-					scene.add(mesh);
-
-					mesh.scale.set(10.1,10.1,10.1);
-					mesh.position.x = -1;		
-					mesh.position.z = -2;
+					obj.scale.set(0.1,0.1,0.1);
+					obj.position.x = -3;		
+					obj.position.z = 0;
 	
 	
-					scene.add( mesh );
-					console.log(2, mesh);
+					scene.add( obj );
+					console.log(2, obj);
 					render();
 				});	
 				
 				//---------------FBX----------
 				
+
+var prog = 0.05;
+var objClone = null;
+var objClone2 = null;
+
+document.body.addEventListener("keydown", function (e) 
+{
+	var step = 0.05;
+	
+	if (e.keyCode == 38) { if(prog+step<0.95){ prog+=step; }}
+	if (e.keyCode == 40) { if(prog-step>0.05){ prog-=step; }}
+	
+	
+	
+	scene.remove(objClone2);
+	
+	var obj = objClone.clone();
+	upResizeGeometry(obj, prog);
+	obj.scale.set(0.1,0.1,0.1);
+	obj.position.x = -3;		
+	obj.position.z = 0;
+	scene.add( obj );
+	
+	objClone2 = obj;
+	
+	console.log(prog);
+});
+
+function upResizeGeometry(obj, step)
+{
+	obj.traverse( function ( child ) 
+	{
+		if ( child.isMesh ) 
+		{ 
+			var count = child.geometry.attributes.position.count;
+
+			MeshGeometry = new THREE.Geometry().fromBufferGeometry( child.geometry.clone() );
+			MeshGeometry.computeFaceNormals();
+			MeshGeometry.mergeVertices();
+			MeshGeometry.computeVertexNormals();
+
+			var modifier = new THREE.SimplifyModifier();
+			child.geometry = modifier.modify(MeshGeometry, MeshGeometry.vertices.length * step | 0, true);
+			child.geometry.computeFaceNormals();
+			child.geometry.computeVertexNormals();
+			
+			//material1 = new THREE.MeshLambertMaterial( {color: 0x00ff00, wireframe:false} )
+			//mesh = new THREE.Mesh(simplified, material1);
+			//scene.add(mesh);
+			
+			console.log(child.name, count, child.geometry.attributes.position.count);
+		}
+	} );	
+}
 				
 				
-				
-			if(1==1)
+			if(1==2)
 			{
 				new THREE.OBJLoader().load						
 				( 
