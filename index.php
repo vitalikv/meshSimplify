@@ -40,6 +40,7 @@
 
 				window.addEventListener( 'resize', onWindowResize, false );
 				
+				//---------------FBX----------
 				
 				var loader = new THREE.FBXLoader();
 				loader.load( 'export/nasos2.fbx', function ( obj ) 
@@ -49,77 +50,87 @@
 					obj.position.set(5,0,0);					
 					scene.add( obj );
 					
-					console.log(obj);
+					console.log(1, obj);
 	
 	
-	obj.material[0].side = THREE.DoubleSide;
-	obj.material[1].side = THREE.DoubleSide;
-	obj.material[2].side = THREE.DoubleSide;
-	obj.material[3].side = THREE.DoubleSide;
-		MeshGeometry = new THREE.Geometry().fromBufferGeometry( obj.geometry );
-		MeshGeometry.computeFaceNormals();
-		MeshGeometry.mergeVertices();
-		MeshGeometry.computeVertexNormals();
+					obj.material[0].side = THREE.DoubleSide;
+					obj.material[1].side = THREE.DoubleSide;
+					obj.material[2].side = THREE.DoubleSide;
+					obj.material[3].side = THREE.DoubleSide;
+					MeshGeometry = new THREE.Geometry().fromBufferGeometry( obj.geometry );
+					MeshGeometry.computeFaceNormals();
+					MeshGeometry.mergeVertices();
+					MeshGeometry.computeVertexNormals();
 
-		var modifier = new THREE.SimplifyModifier();
-        var simplified = modifier.modify(MeshGeometry, MeshGeometry.vertices.length * 0.85 | 0);
-        simplified.computeFaceNormals();
-        simplified.computeVertexNormals();
+					var modifier = new THREE.SimplifyModifier();
+					var simplified = modifier.modify(MeshGeometry, MeshGeometry.vertices.length * 0.30 | 0, true);
+					simplified.computeFaceNormals();
+					simplified.computeVertexNormals();
 
 
 
-		material1 = [obj.material[0].clone(),obj.material[1].clone(),obj.material[2].clone(),obj.material[3].clone()]; 
-		mesh = new THREE.Mesh(simplified, obj.material);
-		scene.add(mesh);
+					material1 = [obj.material[0].clone(),obj.material[1].clone(),obj.material[2].clone(),obj.material[3].clone()];
+					material1 = new THREE.MeshLambertMaterial( {color: 0x00ff00, wireframe:false} )
+					mesh = new THREE.Mesh(simplified, material1);
+					scene.add(mesh);
 
-mesh.position.x = -7;		
-	
+					mesh.scale.set(10.1,10.1,10.1);
+					mesh.position.x = -1;		
+					mesh.position.z = -2;
 	
 	
 					scene.add( mesh );
-					console.log(222 , mesh);
+					console.log(2, mesh);
 					render();
 				});	
 				
+				//---------------FBX----------
 				
 				
-			new THREE.OBJLoader().load						
-			( 
-				'export/nasos.obj', 
-				function ( object ) 
-				{		
-					
-					
-					
-					var obj = object.children[0];					
-	
-					obj.scale.set(10.1, 10.1, 10.1);
-					
-					obj.material = new THREE.MeshLambertMaterial( {color: 0x00ff00} );
-					scene.add(obj);
-					
-		MeshGeometry = new THREE.Geometry().fromBufferGeometry( obj.geometry );
-		MeshGeometry.computeFaceNormals();
-		MeshGeometry.mergeVertices();
-		MeshGeometry.computeVertexNormals();
-
-		var modifier = new THREE.SimplifyModifier();
-        var simplified = modifier.modify(MeshGeometry, MeshGeometry.vertices.length * 0.15 | 0);
-        simplified.computeFaceNormals();
-        simplified.computeVertexNormals();					
-					
-		material1 = obj.material.clone(); 
-		mesh = new THREE.Mesh(simplified, material1);
-		scene.add(mesh);
 				
-
-		mesh.scale.set(10.1, 10.1, 10.1);
-		mesh.position.x = -4;
+				
+			if(1==1)
+			{
+				new THREE.OBJLoader().load						
+				( 
+					'export/nasos.obj', 
+					function ( object ) 
+					{		
+						
+						
+						
+						var obj = object.children[0];					
 		
-					console.log(4, mesh.geometry.attributes.position.count, obj.geometry.attributes.position.count);
+						obj.scale.set(10.1, 10.1, 10.1);
+						
+						obj.material = new THREE.MeshLambertMaterial( {color: 0x00ff00, wireframe:false} );
+						scene.add(obj);
+						
+			MeshGeometry = new THREE.Geometry().fromBufferGeometry( obj.geometry );
+			MeshGeometry.computeFaceNormals();
+			MeshGeometry.mergeVertices();
+			MeshGeometry.computeVertexNormals();
 
-				} 
-			);				
+			var modifier = new THREE.SimplifyModifier();
+			var simplified = modifier.modify(MeshGeometry, MeshGeometry.vertices.length * 0.30 | 0, true);
+			simplified.computeFaceNormals();
+			simplified.computeVertexNormals();					
+						
+			material1 = obj.material.clone(); 
+			mesh = new THREE.Mesh(simplified, material1);
+			scene.add(mesh);
+					
+
+			mesh.scale.set(10.1, 10.1, 10.1);
+			mesh.position.x = -4;
+			
+						console.log(4, mesh.geometry.attributes.position.count, obj.geometry.attributes.position.count);
+						console.log(22, mesh, obj);
+					} 
+				);				
+
+			}				
+				
 				
 
 				if(1==2)
